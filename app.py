@@ -8,7 +8,12 @@ import secrets
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+instance_path = os.path.join(basedir, 'instance')
+os.makedirs(instance_path, exist_ok=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "todos.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 secure_key = secrets.token_hex(16)
