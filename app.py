@@ -46,6 +46,10 @@ with app.app_context():
 def todo_to_dict(todo):
     return {"id": todo.id, "task": todo.task, "completed": todo.completed, "user_id": todo.user_id}
 
+@app.route('/')
+def home():
+    return "Hello from Flask on Render!"
+
 # User Registration
 @app.route('/register', methods=['POST'])
 def register():
