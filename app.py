@@ -22,7 +22,7 @@ app.config['JWT_SECRET_KEY'] = secure_key # To be changed to a secure random key
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["https://teedo-frontend.vercel.app"]}})
 migrate = Migrate(app, db)
 
 # User model
