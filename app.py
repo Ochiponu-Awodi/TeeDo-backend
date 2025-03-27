@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_migrate import Migrate
+from datetime import timedelta
 import secrets
 import os
 
@@ -18,6 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 secure_key = secrets.token_hex(16)
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', secure_key) # Fallback for local dev
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
