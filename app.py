@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path,
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 secure_key = secrets.token_hex(16)
-app.config['JWT_SECRET_KEY'] = secure_key # To be changed to a secure random key in production
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', secure_key) # Fallback for local dev
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
