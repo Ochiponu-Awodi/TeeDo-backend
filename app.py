@@ -29,7 +29,7 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 migrate = Migrate(app, db)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # User model
 class User(db.Model):
@@ -44,9 +44,10 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Create the database tables
-with app.app_context():
-    db.create_all()
+@app.before_first_request
+def initialize_database():
+    with app.app_context():
+        db.create_all()
 
 # Helper function to serialize Todo objects
 def todo_to_dict(todo):
