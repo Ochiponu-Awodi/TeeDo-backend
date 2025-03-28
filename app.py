@@ -92,7 +92,7 @@ def create_todo():
     db.session.add(new_todo)
     db.session.commit()
     todo_dict = todo_to_dict(new_todo)
-    socketio.emit('new_todo', todo_dict)
+    socketio.emit('new_todo', todo_dict) # Broadcast a new todo
     return jsonify(todo_dict), 201
 
 # READ all todos (protected)
@@ -123,6 +123,8 @@ def update_todo(id):
     if 'completed' in data:
         todo.completed = data['completed']
     db.session.commit()
+    todo_dict = todo_to_dict(todo)
+    socketio.emit('updated_todo', todo_dict)  # Broadcast updated todo
     return jsonify(todo_to_dict(todo))
 
 # DELETE a todo (protected)
@@ -131,8 +133,10 @@ def update_todo(id):
 def delete_todo(id):
     user_id = int(get_jwt_identity())
     todo = Todo.query.filter_by(id=id, user_id=user_id).first_or_404(id)
+    todo_dict = todo_to_dict(todo)  # Capture before deletion
     db.session.delete(todo)
     db.session.commit()
+    socketio.emit('deleted_todo', {"id": id})  # Broadcast deleted todo ID
     return '', 204
 
 if __name__ == '__main__':
