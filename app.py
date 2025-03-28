@@ -44,10 +44,9 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-@app.before_first_request
-def initialize_database():
-    with app.app_context():
-        db.create_all()
+# Create database tables at startup
+with app.app_context():
+    db.create_all()
 
 # Helper function to serialize Todo objects
 def todo_to_dict(todo):
