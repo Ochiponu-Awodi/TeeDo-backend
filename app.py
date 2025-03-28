@@ -1,17 +1,15 @@
+import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_migrate import Migrate
-from datetime import timedelta
 from flask_socketio import SocketIO, emit
+from datetime import timedelta
 import secrets
-import os
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 instance_path = os.path.join(basedir, 'instance')
@@ -26,8 +24,9 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
-CORS(app, resources={r"/*": {"origins": ["https://teedo-frontend.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 migrate = Migrate(app, db)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # User model
 class User(db.Model):
@@ -134,5 +133,6 @@ def delete_todo(id):
     return '', 204
 
 if __name__ == '__main__':
+    # For local development only
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)
