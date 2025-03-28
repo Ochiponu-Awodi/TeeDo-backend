@@ -5,10 +5,12 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_migrate import Migrate
 from datetime import timedelta
+from flask_socketio import SocketIO, emit
 import secrets
 import os
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -87,7 +89,9 @@ def create_todo():
     new_todo = Todo(task=data['task'], completed=False, user_id=user_id)
     db.session.add(new_todo)
     db.session.commit()
-    return jsonify(todo_to_dict(new_todo)), 201
+    todo_dict = todo_to_dict(new_todo)
+    socketio.emit('new_todo', todo_dict)
+    return jsonify(todo_dict), 201
 
 # READ all todos (protected)
 @app.route('/todos', methods=['GET'])
@@ -131,4 +135,4 @@ def delete_todo(id):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)
