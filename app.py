@@ -54,7 +54,7 @@ def todo_to_dict(todo):
 
 @app.route('/')
 def home():
-    return "Hello from Flask on Render!"
+    return "Hello from TeeDo"
 
 # User Registration
 @app.route('/register', methods=['POST'])
